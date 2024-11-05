@@ -2,18 +2,17 @@ import React from "react";
 
 const ModifierDetails = ({ modifier }) => {
   return (
-    <>
-      <div className="card bg-base-100 w-96 shadow-xl">
-        <div className="card-body">
-          <h2 className="card-title">Modifiers</h2>
-          <h2>{modifier.name}</h2>
-          <p>{modifier.price}</p>
-          <div className="card-actions justify-end">
-            <button className="btn btn-primary">Buy Now</button>
-          </div>
-        </div>
-      </div>
-    </>
+    <tr>
+      <td className="border px-4 py-2">
+        <img
+          src={modifier.image}
+          alt={modifier.name}
+          className="w-24 h-24 object-cover"
+        />
+      </td>
+      <td className="border px-4 py-2">{modifier.name}</td>
+      <td className="border px-4 py-2">{modifier.price}</td>
+    </tr>
   );
 };
 

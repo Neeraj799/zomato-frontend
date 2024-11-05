@@ -7,6 +7,7 @@ const AddNewModifier = () => {
     price: "",
   });
 
+  const [image, setImage] = useState(null);
   const [errors, setErrors] = useState({});
 
   const validationSchema = Yup.object().shape({
@@ -27,6 +28,10 @@ const AddNewModifier = () => {
     }));
   };
 
+  const handleImageChange = (e) => {
+    setImage(e.target.files[0]);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({});
@@ -39,6 +44,10 @@ const AddNewModifier = () => {
       const form = new FormData();
       form.append("name", name);
       form.append("price", price);
+
+      if (image) {
+        form.append("image", image);
+      }
 
       const response = await fetch(
         "http://localhost:4000/admin/modifiers/create",
@@ -57,6 +66,7 @@ const AddNewModifier = () => {
           name: "",
           price: "",
         });
+        setImage(null);
       }
     } catch (error) {
       if (error.name === "ValidationError") {
@@ -74,41 +84,73 @@ const AddNewModifier = () => {
 
   return (
     <form
-      className="container p-4 bg-white shadow rounded"
+      className="max-w-lg mx-auto p-6 bg-white shadow-lg rounded-lg mt-10"
       onSubmit={handleSubmit}
     >
-      <h2>Create new Category</h2>
+      <h2 className="text-2xl font-semibold text-center mb-4">
+        Create New Modifier
+      </h2>
 
-      <div className="form-group">
-        <label htmlFor="name">Name</label>
+      <div className="mb-4">
+        <label
+          htmlFor="name"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
+          Name
+        </label>
         <input
           type="text"
-          className="form-control"
+          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-400 transition"
           id="name"
           name="name"
           value={formData.name}
           onChange={handleChange}
         />
         {errors.name && (
-          <p className="text-red-500 text-small mt-1">{errors.name}</p>
+          <p className="text-red-500 text-xs mt-1">{errors.name}</p>
         )}
       </div>
 
-      <div className="form-group">
-        <label htmlFor="price">Price</label>
-        <textarea
-          className="form-control"
+      <div className="mb-4">
+        <label
+          htmlFor="price"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
+          Price
+        </label>
+        <input
+          type="number"
+          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-400 transition"
           id="price"
           name="price"
           value={formData.price}
           onChange={handleChange}
-        ></textarea>
+        />
         {errors.price && (
-          <p className="text-rose-500 text-small mt-1">{errors.price}</p>
+          <p className="text-red-500 text-xs mt-1">{errors.price}</p>
         )}
       </div>
 
-      <button type="submit" className="btn btn-primary mt-3">
+      <div className="mb-4">
+        <label
+          htmlFor="image"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
+          Image
+        </label>
+        <input
+          type="file"
+          className="w-full p-2 border border-gray-300 rounded-md transition"
+          id="image"
+          name="image"
+          onChange={handleImageChange}
+        />
+      </div>
+
+      <button
+        type="submit"
+        className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition"
+      >
         Create Modifier
       </button>
     </form>

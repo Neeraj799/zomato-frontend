@@ -1,7 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaBars } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+
+  const handleAuthAction = () => {
+    if (isLoggedIn) {
+      setIsLoggedIn(false);
+      navigate("/");
+    } else {
+      navigate("/login");
+    }
+  };
+
   return (
     <div className="drawer">
       <input id="my-drawer" type="checkbox" className="drawer-toggle" />
@@ -24,7 +37,6 @@ const Navbar = () => {
           className="drawer-overlay"
         ></label>
         <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4 space-y-4">
-          {/* Sidebar content here */}
           <li>
             <a
               className="text-lg font-medium hover:bg-primary hover:text-white rounded-lg p-2 transition-colors"
@@ -57,6 +69,14 @@ const Navbar = () => {
             >
               Modifiers
             </a>
+          </li>
+          <li>
+            <button
+              onClick={handleAuthAction}
+              className="text-lg font-medium bg-blue-600 text-white rounded-lg p-2 transition-colors w-full"
+            >
+              {isLoggedIn ? "Logout" : "Login"}
+            </button>
           </li>
         </ul>
       </div>

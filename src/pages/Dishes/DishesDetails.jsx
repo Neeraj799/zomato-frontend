@@ -1,21 +1,25 @@
+// DishesDetails.js
 import React from "react";
 
 const DishesDetails = ({ dish }) => {
   return (
-    <>
-      <div className="card bg-base-100 w-96 shadow-xl">
-        <figure>
-          <img src={dish.image} alt={dish.title} />
-        </figure>
-        <div className="card-body">
-          <h2 className="card-title">Dishes</h2>
-          <p>Choose from our variety of products.</p>
-          <div className="card-actions justify-end">
-            <button className="btn btn-primary">Buy Now</button>
-          </div>
-        </div>
-      </div>
-    </>
+    <tr>
+      <td className="px-4 py-2">
+        <img
+          src={dish.image}
+          alt={dish.name}
+          className="w-16 h-16 object-cover"
+        />
+      </td>
+      <td className="px-4 py-2">{dish.title}</td>
+      <td className="px-4 py-2">{dish.category?.name}</td>{" "}
+      <td className="px-4 py-2">
+        {dish.modifiers.length > 0
+          ? dish.modifiers.map((modifier) => modifier.name).join(", ")
+          : "No modifiers"}
+      </td>
+      <td className=" px-4 py-2">{dish.description}</td>
+    </tr>
   );
 };
 

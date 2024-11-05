@@ -7,6 +7,7 @@ const AddNewCategory = () => {
     description: "",
   });
 
+  const [image, setImage] = useState(null);
   const [errors, setErrors] = useState({});
 
   const validationSchema = Yup.object().shape({
@@ -27,6 +28,10 @@ const AddNewCategory = () => {
     }));
   };
 
+  const handleImageChange = (e) => {
+    setImage(e.target.files[0]);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({});
@@ -38,6 +43,10 @@ const AddNewCategory = () => {
       const form = new FormData();
       form.append("name", name);
       form.append("description", description);
+
+      if (image) {
+        form.append("image", image);
+      }
 
       const response = await fetch(
         "http://localhost:4000/admin/categories/createCategory",
@@ -56,6 +65,7 @@ const AddNewCategory = () => {
           name: "",
           description: "",
         });
+        setImage(null);
       }
     } catch (error) {
       if (error.name === "ValidationError") {
@@ -73,40 +83,72 @@ const AddNewCategory = () => {
 
   return (
     <form
-      className="container p-4 bg-white shadow rounded"
+      className="max-w-lg mx-auto p-6 bg-white shadow-lg rounded-lg border border-gray-200 mt-10"
       onSubmit={handleSubmit}
     >
-      <h2>Create new Category</h2>
+      <h2 className="text-2xl font-bold text-gray-800 mb-4">
+        Create New Category
+      </h2>
 
-      <div className="form-group">
-        <label htmlFor="name">Name</label>
+      <div className="mb-4">
+        <label
+          htmlFor="name"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
+          Name
+        </label>
         <input
           type="text"
-          className="form-control"
+          className="block w-full border border-gray-300 rounded-md p-2 transition focus:outline-none focus:ring focus:ring-blue-500"
           id="name"
           name="name"
           value={formData.name}
           onChange={handleChange}
         />
         {errors.name && (
-          <p className="text-red-500 text-small mt-1">{errors.name}</p>
+          <p className="text-red-500 text-sm mt-1">{errors.name}</p>
         )}
       </div>
 
-      <div className="form-group">
-        <label htmlFor="description">Description</label>
+      <div className="mb-4">
+        <label
+          htmlFor="description"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
+          Description
+        </label>
         <textarea
-          className="form-control"
+          className="block w-full border border-gray-300 rounded-md p-2 transition focus:outline-none focus:ring focus:ring-blue-500"
           id="description"
           name="description"
           value={formData.description}
           onChange={handleChange}
         ></textarea>
+        {errors.description && (
+          <p className="text-red-500 text-sm mt-1">{errors.description}</p>
+        )}
       </div>
-      {errors.description && (
-        <p className="text-red-500 text-small mt-1">{errors.description}</p>
-      )}
-      <button type="submit" className="btn btn-primary mt-3">
+
+      <div className="mb-4">
+        <label
+          htmlFor="image"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
+          Image
+        </label>
+        <input
+          type="file"
+          className="block w-full border border-gray-300 rounded-md p-2 transition focus:outline-none focus:ring focus:ring-blue-500"
+          id="image"
+          name="image"
+          onChange={handleImageChange}
+        />
+      </div>
+
+      <button
+        type="submit"
+        className="w-full bg-blue-600 text-white font-semibold py-2 rounded-md hover:bg-blue-700 transition duration-200"
+      >
         Create Category
       </button>
     </form>

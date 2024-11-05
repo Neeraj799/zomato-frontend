@@ -6,6 +6,8 @@ const AddNewDish = () => {
     title: "",
     description: "",
     price: "",
+    category: "",
+    modifiers: [],
   });
 
   const [categories, setCategories] = useState([]);
@@ -43,7 +45,7 @@ const AddNewDish = () => {
     description: Yup.string().required("Description is required"),
     price: Yup.string().required("Price is required"),
     category: Yup.string().required("Category is required"),
-    modifier: Yup.string().required("Modifier is required"),
+    modifiers: Yup.array().min(1, "At least one modifier is required"),
   });
 
   const handleChange = (e) => {
@@ -66,11 +68,22 @@ const AddNewDish = () => {
     });
   };
 
-  const handleModifierChange = (e) => {
-    setFormData({
-      ...formData,
-      modifier: e.target.value,
+  const handleModifierChange = (modifierId) => {
+    setFormData((prevData) => {
+      const updatedModifiers = prevData.modifiers.includes(modifierId)
+        ? prevData.modifiers.filter((id) => id !== modifierId)
+        : [...prevData.modifiers, modifierId];
+
+      return {
+        ...prevData,
+        modifiers: updatedModifiers,
+      };
     });
+
+    setErrors((prev) => ({
+      ...prev,
+      modifiers: "",
+    }));
   };
 
   const handleImageChange = (e) => {
@@ -83,13 +96,15 @@ const AddNewDish = () => {
 
     try {
       await validationSchema.validate(formData, { abortEarly: false });
-      const { title, description, price, category, modifier } = formData;
+      const { title, description, price, category, modifiers } = formData;
       const form = new FormData();
       form.append("title", title);
       form.append("description", description);
       form.append("price", price);
       form.append("category", category);
-      form.append("modifier", modifier);
+      modifiers.forEach((modifier) => {
+        form.append("modifiers", modifier);
+      });
 
       if (image) {
         form.append("image", image);
@@ -113,7 +128,7 @@ const AddNewDish = () => {
           description: "",
           price: "",
           category: "",
-          modifier: "",
+          modifiers: [],
         });
         setImage(null);
       }
@@ -133,113 +148,145 @@ const AddNewDish = () => {
 
   return (
     <form
-      className="container p-4 bg-white shadow rounded"
+      className="container mx-auto p-6 bg-white shadow-lg rounded-lg"
       onSubmit={handleSubmit}
     >
-      <h2>Create new dish</h2>
+      <h2 className="text-2xl font-bold mb-4 text-gray-800">Create New Dish</h2>
 
-      <div className="form-group">
-        <label htmlFor="title">Title</label>
+      <div className="form-group mb-4">
+        <label
+          htmlFor="title"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Title
+        </label>
         <input
           type="text"
-          className="form-control"
+          className="w-full p-2 border border-gray-300 rounded mt-1 focus:ring-2 focus:ring-blue-500"
           id="title"
           name="title"
           value={formData.title}
           onChange={handleChange}
         />
+        {errors.title && (
+          <p className="text-red-500 text-xs mt-1">{errors.title}</p>
+        )}
       </div>
-      {errors.title && (
-        <p className="text-red-500 text-small mt-1">{errors.title}</p>
-      )}
 
-      <div className="form-group">
-        <label htmlFor="description">Description</label>
+      <div className="form-group mb-4">
+        <label
+          htmlFor="description"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Description
+        </label>
         <textarea
-          className="form-control"
+          className="w-full p-2 border border-gray-300 rounded mt-1 focus:ring-2 focus:ring-blue-500"
           id="description"
           name="description"
           value={formData.description}
           onChange={handleChange}
         ></textarea>
+        {errors.description && (
+          <p className="text-red-500 text-xs mt-1">{errors.description}</p>
+        )}
       </div>
-      {errors.description && (
-        <p className="text-red-500 text-small mt-1">{errors.description}</p>
-      )}
 
-      <div className="form-group">
-        <label htmlFor="price">Price</label>
+      <div className="form-group mb-4">
+        <label
+          htmlFor="price"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Price
+        </label>
         <input
           type="number"
-          className="form-control"
+          className="w-full p-2 border border-gray-300 rounded mt-1 focus:ring-2 focus:ring-blue-500"
           id="price"
           name="price"
           value={formData.price}
           onChange={handleChange}
         />
+        {errors.price && (
+          <p className="text-red-500 text-xs mt-1">{errors.price}</p>
+        )}
       </div>
-      {errors.price && (
-        <p className="text-red-500 text-small mt-1">{errors.price}</p>
-      )}
 
-      <div className="form-group">
-        <label htmlFor="category">Select Category:</label>
+      <div className="form-group mb-4">
+        <label
+          htmlFor="category"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Select Category
+        </label>
         <select
-          type="text"
-          className="form-control"
+          className="w-full p-2 border border-gray-300 rounded mt-1 focus:ring-2 focus:ring-blue-500"
           id="category"
           name="category"
           value={formData.category}
           onChange={handleCategoryChange}
         >
-          <option value=""> Select a category</option>
+          <option value="">Select a category</option>
           {categories.map((category) => (
-            <option key={category.id} value={category.id}>
+            <option key={category._id} value={category._id}>
               {category.name}
             </option>
           ))}
         </select>
+        {errors.category && (
+          <p className="text-red-500 text-xs mt-1">{errors.category}</p>
+        )}
       </div>
-      {errors.category && (
-        <p className="text-red-500 text-small mt-1">{errors.category}</p>
-      )}
 
-      <div className="form-group">
-        <label htmlFor="modifiers">Modifiers</label>
-        <select
-          type="text"
-          className="form-control"
-          id="modifier"
-          name="modifier"
-          value={formData.modifier}
-          onChange={handleModifierChange}
-        >
-          <option value="">Select a modifier</option>
-
+      <div className="form-group mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Modifiers
+        </label>
+        <div className="space-y-2 max-h-48 overflow-y-auto border border-gray-300 rounded p-3">
           {modifiers.map((modifier) => (
-            <option key={modifier.id} value={modifier.id}>
-              {modifier.name}
-            </option>
+            <div key={modifier._id} className="flex items-center">
+              <input
+                type="checkbox"
+                id={`modifier-${modifier._id}`}
+                checked={formData.modifiers.includes(modifier._id)}
+                onChange={() => handleModifierChange(modifier._id)}
+                className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+              />
+              <label
+                htmlFor={`modifier-${modifier._id}`}
+                className="ml-2 text-sm text-gray-700"
+              >
+                {modifier.name}
+              </label>
+            </div>
           ))}
-        </select>
+        </div>
+        {errors.modifiers && (
+          <p className="text-red-500 text-xs mt-1">{errors.modifiers}</p>
+        )}
       </div>
-      {errors.modifier && (
-        <p className="text-red-500 text-small mt-1">{errors.modifier}</p>
-      )}
 
-      <div className="form-group">
-        <label htmlFor="image">Image</label>
+      <div className="form-group mb-4">
+        <label
+          htmlFor="image"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Image
+        </label>
         <input
           type="file"
-          className="form-control-file"
+          className="w-full p-2 border border-gray-300 rounded mt-1"
           id="image"
           name="image"
           onChange={handleImageChange}
         />
       </div>
 
-      <button type="submit" className="btn btn-primary mt-3">
-        Create dish
+      <button
+        type="submit"
+        className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 mt-4"
+      >
+        Create Dish
       </button>
     </form>
   );

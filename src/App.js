@@ -8,6 +8,7 @@ import Category from "./pages/Category/Category";
 import AddNewCategory from "./pages/Category/AddNewCategory";
 import Modifiers from "./pages/modifier/Modifiers";
 import AddNewModifier from "./pages/modifier/AddNewModifier";
+import Login from "./pages/Auth/Login";
 function App() {
   return (
     <div className="App">
@@ -15,6 +16,7 @@ function App() {
         <Navbar />
         <div className="pages">
           <Routes>
+            <Route path="/login" element={<Login />} />
             <Route path="/" element={<Home />} />
             <Route path="/dishes" element={<Dishes />} />
             <Route path="/dishes/addDish" element={<AddNewDish />} />

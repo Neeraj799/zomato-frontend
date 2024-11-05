@@ -6,7 +6,19 @@ const Modifiers = () => {
 
   useEffect(() => {
     const fetchModifiers = async () => {
-      const response = await fetch("http://localhost:4000/admin/modifiers");
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://localhost:4000/admin/modifiers", {
+        method: "GET",
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch dishes");
+      }
+
       const data = await response.json();
       if (response.ok) {
         setModifiers(data);
@@ -24,14 +36,21 @@ const Modifiers = () => {
           </a>
         </div>
         <div className="flex items-center justify-center">
-          <div className="mt-2">
-            {modifiers &&
-              modifiers.map((modifier) => (
-                <div className="mt-20">
+          <table className="table-auto w-full mt-4 border border-gray-200 shadow-lg">
+            <thead>
+              <tr>
+                <th className="px-4 py-2">Image</th>
+                <th className="px-4 py-2">Name</th>
+                <th className="px-4 py-2">Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              {modifiers &&
+                modifiers.map((modifier) => (
                   <ModifierDetails key={modifier._id} modifier={modifier} />
-                </div>
-              ))}
-          </div>
+                ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </>
