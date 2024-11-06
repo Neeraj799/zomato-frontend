@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaBars } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
@@ -6,10 +6,18 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
   const handleAuthAction = () => {
     if (isLoggedIn) {
+      localStorage.removeItem("token");
       setIsLoggedIn(false);
-      navigate("/");
+      navigate("/login");
     } else {
       navigate("/login");
     }
@@ -53,7 +61,6 @@ const Navbar = () => {
               Dishes
             </a>
           </li>
-
           <li>
             <a
               className="text-lg font-medium hover:bg-primary hover:text-white rounded-lg p-2 transition-colors"
