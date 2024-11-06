@@ -4,18 +4,23 @@ const UpdateCategoryModal = ({ isOpen, onClose, category, onUpdate }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
 
   useEffect(() => {
     if (category) {
       setName(category.name);
       setDescription(category.description);
-      setImage(null);
+      if (category.image) {
+        setImagePreview(category.image);
+      }
     }
   }, [category]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setImage(file);
+
+    setImagePreview(URL.createObjectURL(file));
   };
 
   const handleSubmit = async (e) => {
@@ -71,6 +76,15 @@ const UpdateCategoryModal = ({ isOpen, onClose, category, onUpdate }) => {
             <label className="block mb-2" htmlFor="image">
               Category Image
             </label>
+            {imagePreview && (
+              <div className="mb-2">
+                <img
+                  src={imagePreview}
+                  alt="Modifier Preview"
+                  className="w-32 h-32 object-cover"
+                />
+              </div>
+            )}
             <input
               type="file"
               name="image"

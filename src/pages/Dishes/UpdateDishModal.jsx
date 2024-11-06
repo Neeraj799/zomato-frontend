@@ -9,6 +9,7 @@ const UpdateDishModal = ({ isOpen, onClose, dish, onUpdate }) => {
   const [allModifiers, setAllModifiers] = useState([]);
   const [selectedModifiers, setSelectedModifiers] = useState([]);
   const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
 
   useEffect(() => {
     if (dish) {
@@ -17,13 +18,16 @@ const UpdateDishModal = ({ isOpen, onClose, dish, onUpdate }) => {
       setDescription(dish.description);
       setCategory(dish.category._id);
       setSelectedModifiers(dish.modifiers.map((mod) => mod._id));
-      setImage(null);
+      if (dish.image) {
+        setImagePreview(dish.image);
+      }
     }
   }, [dish]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setImage(file);
+    setImagePreview(URL.createObjectURL(file));
   };
 
   useEffect(() => {
@@ -99,7 +103,7 @@ const UpdateDishModal = ({ isOpen, onClose, dish, onUpdate }) => {
         <h2 className="text-xl mb-4">Update Dishes</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-2">
-            <label className="block mb-2" htmlFor="name">
+            <label className="block mb-1 text-sm" htmlFor="name">
               Title
             </label>
             <input
@@ -108,12 +112,12 @@ const UpdateDishModal = ({ isOpen, onClose, dish, onUpdate }) => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Dish Name"
-              className="input input-primary w-full mb-2"
+              className="input input-primary w-full mb-2 text-sm py-1 px-2 h-8"
             />
           </div>
 
           <div className="mb-2">
-            <label className="block mb-2" htmlFor="description">
+            <label className="block mb-1 text-sm" htmlFor="description">
               Description
             </label>
             <textarea
@@ -121,20 +125,21 @@ const UpdateDishModal = ({ isOpen, onClose, dish, onUpdate }) => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Dish Description"
-              className="input input-primary w-full mb-4"
+              className="input input-primary w-full mb-4 text-sm py-1 px-2 h-8"
             />
           </div>
+
           <div className="mb-2">
-            <label className="block mb-2" htmlFor="price">
+            <label className="block mb-1 text-sm" htmlFor="price">
               Price
             </label>
             <input
-              type="text"
+              type="number"
               name="price"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
               placeholder="Price"
-              className="input input-primary w-full mb-2"
+              className="input input-primary w-full mb-2 text-sm py-1 px-2 h-8"
             />
           </div>
 
@@ -146,7 +151,7 @@ const UpdateDishModal = ({ isOpen, onClose, dish, onUpdate }) => {
               Select Category
             </label>
             <select
-              className="w-full p-2 border border-gray-300 rounded mt-1 focus:ring-2 focus:ring-blue-500"
+              className="w-full text-sm py-1 px-2 border border-gray-300 rounded mt-1 focus:ring-2 focus:ring-blue-500"
               id="category"
               name="category"
               value={category}
@@ -165,7 +170,7 @@ const UpdateDishModal = ({ isOpen, onClose, dish, onUpdate }) => {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Modifiers
             </label>
-            <div className="space-y-2 max-h-48 overflow-y-auto border border-gray-300 rounded p-3">
+            <div className="space-y-2 max-h-32 overflow-y-auto border border-gray-300 rounded p-3">
               {allModifiers.map((modifier) => (
                 <div key={modifier._id} className="flex items-center">
                   <input
@@ -188,15 +193,24 @@ const UpdateDishModal = ({ isOpen, onClose, dish, onUpdate }) => {
           </div>
 
           <div className="mb-2">
-            <label className="block mb-2" htmlFor="image">
-              Image
+            <label className="block mb-2 text-sm" htmlFor="image">
+              Modifier Image
             </label>
+            {imagePreview && (
+              <div className="mb-2">
+                <img
+                  src={imagePreview}
+                  alt="Modifier Preview"
+                  className="w-32 h-32 object-cover"
+                />
+              </div>
+            )}
             <input
               type="file"
               name="image"
               accept="image/*"
               onChange={handleImageChange}
-              className="input input-primary w-full mb-4"
+              className="input input-primary w-full mb-4 text-sm py-1 px-2 h-8"
             />
           </div>
 
@@ -204,13 +218,13 @@ const UpdateDishModal = ({ isOpen, onClose, dish, onUpdate }) => {
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-gray-200 rounded"
+              className="px-4 py-2 bg-gray-200 rounded text-sm"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
             >
               Update
             </button>

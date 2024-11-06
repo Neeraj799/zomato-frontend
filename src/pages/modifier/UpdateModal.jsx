@@ -4,17 +4,23 @@ const UpdateModifierModal = ({ isOpen, onClose, modifier, onUpdate }) => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
 
   useEffect(() => {
     if (modifier) {
       setName(modifier.name);
       setPrice(modifier.price);
     }
+    if (modifier.image) {
+      setImagePreview(modifier.image);
+    }
   }, [modifier]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     setImage(file);
+
+    setImagePreview(URL.createObjectURL(file));
   };
 
   const handleSubmit = async (e) => {
@@ -69,6 +75,15 @@ const UpdateModifierModal = ({ isOpen, onClose, modifier, onUpdate }) => {
             <label className="block mb-2" htmlFor="image">
               Modifier Image
             </label>
+            {imagePreview && (
+              <div className="mb-2">
+                <img
+                  src={imagePreview}
+                  alt="Modifier Preview"
+                  className="w-32 h-32 object-cover"
+                />
+              </div>
+            )}
             <input
               type="file"
               name="image"
