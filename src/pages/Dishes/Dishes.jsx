@@ -3,7 +3,7 @@ import DishesDetails from "./DishesDetails";
 import UpdateDishModal from "./UpdateDishModal";
 
 const Dishes = () => {
-  const [dishes, setdishes] = useState([]);
+  const [dishes, setDishes] = useState([]);
   const [selectedDish, setSelectedDish] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);
 
@@ -24,7 +24,7 @@ const Dishes = () => {
       }
 
       const data = await response.json();
-      setdishes(data);
+      setDishes(data);
     };
     fetchdishes();
   }, []);
@@ -44,7 +44,8 @@ const Dishes = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setSelectedDish((prevDishes) =>
+        // Update the dishes array instead of selectedDish
+        setDishes((prevDishes) =>
           prevDishes.map((dish) => (dish._id === id ? data.submission : dish))
         );
         setModalOpen(false);
