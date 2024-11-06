@@ -1,6 +1,6 @@
 import React from "react";
 
-const CategoryDetails = ({ category }) => {
+const CategoryDetails = ({ category, onUpdate }) => {
   return (
     <tr>
       <td className="border px-4 py-2">
@@ -12,6 +12,14 @@ const CategoryDetails = ({ category }) => {
       </td>
       <td className="border px-4 py-2">{category.name}</td>
       <td className="border px-4 py-2">{category.description}</td>
+      <td className="border px-4 py-2">
+        <button
+          onClick={() => onUpdate(category)}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Update
+        </button>
+      </td>
     </tr>
   );
 };

@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import DishesDetails from "./DishesDetails";
+import UpdateDishModal from "./UpdateDishModal";
 
 const Dishes = () => {
   const [dishes, setdishes] = useState([]);
+  const [selectedDish, setSelectedDish] = useState(null);
+  const [isModalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchdishes = async () => {
@@ -25,7 +28,40 @@ const Dishes = () => {
     };
     fetchdishes();
   }, []);
-  console.log(dishes);
+
+  const handleUpdate = async (id, title, category, modifiers, description) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`http://localhost:4000/admin/dishes/${id}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(title, category, modifiers, description),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSelectedDish((prevDishes) =>
+          prevDishes.map((dish) => (dish._id === id ? data.submission : dish))
+        );
+        setModalOpen(false);
+        alert("Dish updated successfully!");
+      } else {
+        throw new Error(data.error);
+      }
+    } catch (error) {
+      alert(`Error updating Dish: ${error.message}`);
+    }
+  };
+
+  const handleUpdateClick = (modifier) => {
+    setSelectedDish(modifier);
+    setModalOpen(true);
+  };
+
   return (
     <div className="container mx-auto">
       <div className="flex justify-end items-end w-full h-20 shadow-xl mt-4">
@@ -46,11 +82,26 @@ const Dishes = () => {
           </thead>
           <tbody>
             {dishes.map((dish) => (
-              <DishesDetails key={dish._id} dish={dish} />
+              <DishesDetails
+                key={dish._id}
+                dish={dish}
+                onUpdate={handleUpdateClick}
+              />
             ))}
           </tbody>
         </table>
       </div>
+      {selectedDish && (
+        <UpdateDishModal
+          isOpen={isModalOpen}
+          onClose={() => {
+            setModalOpen(false);
+            setSelectedDish(null);
+          }}
+          dish={selectedDish}
+          onUpdate={handleUpdate}
+        />
+      )}
     </div>
   );
 };

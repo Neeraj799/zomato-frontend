@@ -1,7 +1,7 @@
 // DishesDetails.js
 import React from "react";
 
-const DishesDetails = ({ dish }) => {
+const DishesDetails = ({ dish, onUpdate }) => {
   return (
     <tr>
       <td className="px-4 py-2">
@@ -19,6 +19,14 @@ const DishesDetails = ({ dish }) => {
           : "No modifiers"}
       </td>
       <td className=" px-4 py-2">{dish.description}</td>
+      <td className="border px-4 py-2">
+        <button
+          onClick={() => onUpdate(dish)}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Update
+        </button>
+      </td>
     </tr>
   );
 };
