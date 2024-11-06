@@ -3,21 +3,34 @@ import React, { useEffect, useState } from "react";
 const UpdateCategoryModal = ({ isOpen, onClose, category, onUpdate }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [image, setImage] = useState(null);
 
   useEffect(() => {
     if (category) {
       setName(category.name);
       setDescription(category.description);
+      setImage(null);
     }
   }, [category]);
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name.trim() || !description) {
+    if (!name.trim() || !description || !image) {
       alert("Please fill in all fields correctly");
       return;
     }
-    await onUpdate(category._id, name, description);
+
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("description", description);
+    formData.append("image", image);
+
+    await onUpdate(category._id, formData);
   };
 
   if (!isOpen) return null;
@@ -50,6 +63,19 @@ const UpdateCategoryModal = ({ isOpen, onClose, category, onUpdate }) => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Category Description"
+              className="input input-primary w-full mb-4"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-2" htmlFor="image">
+              Category Image
+            </label>
+            <input
+              type="file"
+              name="image"
+              accept="image/*"
+              onChange={handleImageChange}
               className="input input-primary w-full mb-4"
             />
           </div>

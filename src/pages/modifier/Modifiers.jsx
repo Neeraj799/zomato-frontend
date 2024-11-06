@@ -11,7 +11,8 @@ const Modifiers = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      setErrorMessage("You need to log in to access this page.");
+      alert("You need to log in to access this page.");
+      window.location.href = "/login";
       return;
     }
 
@@ -39,7 +40,7 @@ const Modifiers = () => {
     fetchModifiers();
   }, []);
 
-  const handleUpdate = async (id, name, price) => {
+  const handleUpdate = async (id, formData) => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -53,9 +54,8 @@ const Modifiers = () => {
           method: "PATCH",
           headers: {
             Authorization: token,
-            "Content-Type": "application/json",
           },
-          body: JSON.stringify({ name, price }),
+          body: formData,
         }
       );
 
@@ -74,6 +74,34 @@ const Modifiers = () => {
       }
     } catch (error) {
       alert(`Error updating modifier: ${error.message}`);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(
+        `http://localhost:4000/admin/modifiers/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: token,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete the category");
+      }
+
+      setModifiers((prevModifiers) =>
+        prevModifiers.filter((modifier) => modifier._id !== id)
+      );
+      alert("Category deleted successfully!");
+    } catch (error) {
+      alert(`Error deleting category: ${error.message}`);
     }
   };
 
@@ -116,6 +144,7 @@ const Modifiers = () => {
                     key={modifier._id}
                     modifier={modifier}
                     onUpdate={handleUpdateClick}
+                    onDelete={handleDelete}
                   />
                 ))}
               </tbody>

@@ -1,7 +1,7 @@
 // DishesDetails.js
 import React from "react";
 
-const DishesDetails = ({ dish, onUpdate }) => {
+const DishesDetails = ({ dish, onUpdate, onDelete }) => {
   return (
     <tr>
       <td className="px-4 py-2">
@@ -25,6 +25,14 @@ const DishesDetails = ({ dish, onUpdate }) => {
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
           Update
+        </button>
+      </td>
+      <td className="border px-4 py-2">
+        <button
+          onClick={() => onDelete(dish._id)}
+          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+        >
+          Delete
         </button>
       </td>
     </tr>

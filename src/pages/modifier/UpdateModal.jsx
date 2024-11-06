@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 const UpdateModifierModal = ({ isOpen, onClose, modifier, onUpdate }) => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
+  const [image, setImage] = useState(null);
 
   useEffect(() => {
     if (modifier) {
@@ -11,13 +12,24 @@ const UpdateModifierModal = ({ isOpen, onClose, modifier, onUpdate }) => {
     }
   }, [modifier]);
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name.trim() || !price || price < 0) {
       alert("Please fill in all fields correctly");
       return;
     }
-    await onUpdate(modifier._id, name, price);
+
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("price", price);
+    formData.append("image", image);
+
+    await onUpdate(modifier._id, formData);
   };
 
   if (!isOpen) return null;
@@ -50,6 +62,19 @@ const UpdateModifierModal = ({ isOpen, onClose, modifier, onUpdate }) => {
               value={price}
               onChange={(e) => setPrice(e.target.value)}
               className="w-full px-3 py-2 border rounded"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block mb-2" htmlFor="image">
+              Modifier Image
+            </label>
+            <input
+              type="file"
+              name="image"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="input input-primary w-full mb-4"
             />
           </div>
 

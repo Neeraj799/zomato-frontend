@@ -8,6 +8,7 @@ const UpdateDishModal = ({ isOpen, onClose, dish, onUpdate }) => {
   const [allCategories, setAllCategories] = useState([]);
   const [allModifiers, setAllModifiers] = useState([]);
   const [selectedModifiers, setSelectedModifiers] = useState([]);
+  const [image, setImage] = useState(null);
 
   useEffect(() => {
     if (dish) {
@@ -16,8 +17,14 @@ const UpdateDishModal = ({ isOpen, onClose, dish, onUpdate }) => {
       setDescription(dish.description);
       setCategory(dish.category._id);
       setSelectedModifiers(dish.modifiers.map((mod) => mod._id));
+      setImage(null);
     }
   }, [dish]);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
+  };
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -66,17 +73,22 @@ const UpdateDishModal = ({ isOpen, onClose, dish, onUpdate }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!title.trim() || !category || !description) {
+    if (!title.trim() || !category || !description || !image) {
       alert("Please fill in all fields correctly");
       return;
     }
-    await onUpdate(dish._id, {
-      title,
-      price,
-      category,
-      modifiers: selectedModifiers,
-      description,
-    });
+
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("category", category);
+    formData.append("image", image);
+
+    selectedModifiers.forEach((modifierId) =>
+      formData.append("modifiers[]", modifierId)
+    );
+
+    await onUpdate(dish._id, formData);
   };
 
   if (!isOpen) return null;
@@ -86,7 +98,7 @@ const UpdateDishModal = ({ isOpen, onClose, dish, onUpdate }) => {
       <div className="bg-white p-6 rounded-lg w-96">
         <h2 className="text-xl mb-4">Update Dishes</h2>
         <form onSubmit={handleSubmit}>
-          <div className="mb-4">
+          <div className="mb-2">
             <label className="block mb-2" htmlFor="name">
               Title
             </label>
@@ -100,7 +112,7 @@ const UpdateDishModal = ({ isOpen, onClose, dish, onUpdate }) => {
             />
           </div>
 
-          <div className="mb-4">
+          <div className="mb-2">
             <label className="block mb-2" htmlFor="description">
               Description
             </label>
@@ -112,7 +124,7 @@ const UpdateDishModal = ({ isOpen, onClose, dish, onUpdate }) => {
               className="input input-primary w-full mb-4"
             />
           </div>
-          <div className="mb-4">
+          <div className="mb-2">
             <label className="block mb-2" htmlFor="price">
               Price
             </label>
@@ -126,7 +138,7 @@ const UpdateDishModal = ({ isOpen, onClose, dish, onUpdate }) => {
             />
           </div>
 
-          <div className="form-group mb-4">
+          <div className="form-group mb-2">
             <label
               htmlFor="category"
               className="block text-sm font-medium text-gray-700"
@@ -149,7 +161,7 @@ const UpdateDishModal = ({ isOpen, onClose, dish, onUpdate }) => {
             </select>
           </div>
 
-          <div className="form-group mb-4">
+          <div className="form-group mb-2">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Modifiers
             </label>
@@ -159,6 +171,7 @@ const UpdateDishModal = ({ isOpen, onClose, dish, onUpdate }) => {
                   <input
                     type="checkbox"
                     id={`modifier-${modifier._id}`}
+                    name="modifiers"
                     checked={selectedModifiers.includes(modifier._id)}
                     onChange={() => handleModifierChange(modifier._id)}
                     className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
@@ -172,6 +185,19 @@ const UpdateDishModal = ({ isOpen, onClose, dish, onUpdate }) => {
                 </div>
               ))}
             </div>
+          </div>
+
+          <div className="mb-2">
+            <label className="block mb-2" htmlFor="image">
+              Image
+            </label>
+            <input
+              type="file"
+              name="image"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="input input-primary w-full mb-4"
+            />
           </div>
 
           <div className="flex justify-end gap-2">

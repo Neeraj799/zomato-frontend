@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 
 const AddNewDish = () => {
@@ -16,9 +17,19 @@ const AddNewDish = () => {
   const [image, setImage] = useState(null);
   const [errors, setErrors] = useState({});
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchCategories = async () => {
-      const response = await fetch("http://localhost:4000/admin/categories");
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://localhost:4000/admin/categories", {
+        method: "GET",
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      });
+
       const data = await response.json();
 
       if (response.ok) {
@@ -30,7 +41,15 @@ const AddNewDish = () => {
 
   useEffect(() => {
     const fetchModifiers = async () => {
-      const response = await fetch("http://localhost:4000/admin/modifiers");
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://localhost:4000/admin/modifiers", {
+        method: "GET",
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      });
+
       const data = await response.json();
 
       if (response.ok) {
@@ -132,6 +151,7 @@ const AddNewDish = () => {
         });
         setImage(null);
       }
+      navigate("/dishes");
     } catch (error) {
       if (error.name === "ValidationError") {
         const validationErrors = {};

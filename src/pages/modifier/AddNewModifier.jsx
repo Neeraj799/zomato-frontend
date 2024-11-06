@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 
 const AddNewModifier = () => {
@@ -9,6 +10,8 @@ const AddNewModifier = () => {
 
   const [image, setImage] = useState(null);
   const [errors, setErrors] = useState({});
+
+  const navigate = useNavigate();
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("Name is required"),
@@ -68,6 +71,7 @@ const AddNewModifier = () => {
         });
         setImage(null);
       }
+      navigate("/modifiers");
     } catch (error) {
       if (error.name === "ValidationError") {
         const validationErrors = {};

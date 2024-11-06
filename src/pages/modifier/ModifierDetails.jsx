@@ -1,6 +1,6 @@
 import React from "react";
 
-const ModifierDetails = ({ modifier, onUpdate }) => {
+const ModifierDetails = ({ modifier, onUpdate, onDelete }) => {
   return (
     <tr>
       <td className="border px-4 py-2">
@@ -18,6 +18,14 @@ const ModifierDetails = ({ modifier, onUpdate }) => {
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
           Update
+        </button>
+      </td>
+      <td className="border px-4 py-2">
+        <button
+          onClick={() => onDelete(modifier._id)}
+          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+        >
+          Delete
         </button>
       </td>
     </tr>
