@@ -33,8 +33,12 @@ const UpdateModifierModal = ({ isOpen, onClose, modifier, onUpdate }) => {
     const formData = new FormData();
     formData.append("name", name);
     formData.append("price", price);
-    formData.append("image", image);
 
+    if (image) {
+      formData.append("image", image);
+    } else if (modifier.image) {
+      formData.append("image", modifier.image);
+    }
     await onUpdate(modifier._id, formData);
   };
 

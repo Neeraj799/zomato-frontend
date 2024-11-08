@@ -7,6 +7,7 @@ const AddNewDish = () => {
     title: "",
     description: "",
     price: "",
+    actualPrice: "",
     category: "",
     modifiers: [],
   });
@@ -115,11 +116,13 @@ const AddNewDish = () => {
 
     try {
       await validationSchema.validate(formData, { abortEarly: false });
-      const { title, description, price, category, modifiers } = formData;
+      const { title, description, price, actualPrice, category, modifiers } =
+        formData;
       const form = new FormData();
       form.append("title", title);
       form.append("description", description);
       form.append("price", price);
+      form.append("actualPrice", actualPrice);
       form.append("category", category);
       modifiers.forEach((modifier) => {
         form.append("modifiers", modifier);
@@ -146,6 +149,7 @@ const AddNewDish = () => {
           title: "",
           description: "",
           price: "",
+          actualPrice,
           category: "",
           modifiers: [],
         });
@@ -229,6 +233,26 @@ const AddNewDish = () => {
         />
         {errors.price && (
           <p className="text-red-500 text-xs mt-1">{errors.price}</p>
+        )}
+      </div>
+
+      <div className="form-group mb-4">
+        <label
+          htmlFor="price"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Actual price
+        </label>
+        <input
+          type="number"
+          className="w-full p-2 border border-gray-300 rounded mt-1 focus:ring-2 focus:ring-blue-500"
+          id="actualPrice"
+          name="actualPrice"
+          value={formData.actualPrice}
+          onChange={handleChange}
+        />
+        {errors.actualPrice && (
+          <p className="text-red-500 text-xs mt-1">{errors.actualPrice}</p>
         )}
       </div>
 

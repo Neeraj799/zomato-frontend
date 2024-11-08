@@ -25,7 +25,7 @@ const UpdateCategoryModal = ({ isOpen, onClose, category, onUpdate }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!name.trim() || !description || !image) {
+    if (!name.trim() || !description) {
       alert("Please fill in all fields correctly");
       return;
     }

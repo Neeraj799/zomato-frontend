@@ -77,7 +77,7 @@ const UpdateDishModal = ({ isOpen, onClose, dish, onUpdate }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!title.trim() || !category || !description || !image) {
+    if (!title.trim() || !category || !description) {
       alert("Please fill in all fields correctly");
       return;
     }
