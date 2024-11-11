@@ -79,6 +79,24 @@ const Navbar = () => {
               Modifiers
             </a>
           </li>
+
+          <li>
+            <a
+              className="text-lg font-medium hover:bg-primary hover:text-white rounded-lg p-2 transition-colors"
+              href="/orders"
+            >
+              Orders
+            </a>
+          </li>
+
+          <li>
+            <a
+              className="text-lg font-medium hover:bg-primary hover:text-white rounded-lg p-2 transition-colors"
+              href="/users"
+            >
+              Users
+            </a>
+          </li>
           <li>
             <button
               onClick={handleAuthAction}

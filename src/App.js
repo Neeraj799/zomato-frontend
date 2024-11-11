@@ -9,6 +9,8 @@ import AddNewCategory from "./pages/Category/AddNewCategory";
 import Modifiers from "./pages/modifier/Modifiers";
 import AddNewModifier from "./pages/modifier/AddNewModifier";
 import Login from "./pages/Auth/Login";
+import OrdersList from "./pages/orders/orders";
+import UsersPage from "./pages/user/user";
 function App() {
   return (
     <div className="App">
@@ -27,6 +29,8 @@ function App() {
             />
             <Route path="/modifiers" element={<Modifiers />} />
             <Route path="/modifiers/addModifier" element={<AddNewModifier />} />
+            <Route path="/orders" element={<OrdersList />} />
+            <Route path="/users" element={<UsersPage />} />
           </Routes>
         </div>
       </BrowserRouter>
