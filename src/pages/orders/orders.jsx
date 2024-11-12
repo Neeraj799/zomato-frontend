@@ -3,28 +3,85 @@ import React, { useEffect, useState } from "react";
 const OrdersList = () => {
   const [orders, setOrders] = useState([]);
 
+  const statusOptions = [
+    "PENDING",
+    "CONFIRMED",
+    "PREPARING",
+    "OUT_FOR_DELIVERY",
+    "DELIVERED",
+    "CANCELLED",
+  ];
+
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        // Replace with your actual API endpoint
-        const response = await fetch("http://localhost:4000/admin/orders");
-
-        // Check if the response is successful
-        if (!response.ok) {
-          throw new Error("Error fetching orders");
-        }
-
-        // Parse the response JSON
-        const data = await response.json();
-        setOrders(data);
-        console.log(data);
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-      }
-    };
-
     fetchOrders();
   }, []);
+
+  const fetchOrders = async () => {
+    try {
+      // Replace with your actual API endpoint
+      const response = await fetch("http://localhost:4000/admin/orders");
+
+      // Check if the response is successful
+      if (!response.ok) {
+        throw new Error("Error fetching orders");
+      }
+
+      // Parse the response JSON
+      const data = await response.json();
+      setOrders(data);
+      console.log(data);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    }
+  };
+
+  const handleStatusChange = async (orderId, newStatus) => {
+    try {
+      const response = await fetch(
+        `http://localhost:4000/admin/orders/${orderId}/status`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ status: newStatus }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update status");
+      }
+
+      // Update the local state after successful API call
+      setOrders(
+        orders.map((order) =>
+          order._id === orderId ? { ...order, status: newStatus } : order
+        )
+      );
+    } catch (error) {
+      console.error("Error updating order status:", error);
+      alert("Failed to update order status");
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "PENDING":
+        return "bg-yellow-100 text-yellow-800";
+      case "CONFIRMED":
+        return "bg-blue-100 text-blue-800";
+      case "PREPARING":
+        return "bg-purple-100 text-purple-800";
+      case "OUT_FOR_DELIVERY":
+        return "bg-indigo-100 text-indigo-800";
+      case "DELIVERED":
+        return "bg-green-100 text-green-800";
+      case "CANCELLED":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
 
   return (
     <div className="container mx-auto p-6">
@@ -54,7 +111,39 @@ const OrdersList = () => {
               </span>
             </p>
 
-            {/* Displaying User Information */}
+            <div className="mt-4 flex items-center gap-4">
+              <span
+                className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(
+                  order.status
+                )}`}
+              >
+                Current Status: {order.status}
+              </span>
+
+              <div className="flex items-center gap-2">
+                <label
+                  htmlFor={`status-${order._id}`}
+                  className="text-gray-700 font-medium"
+                >
+                  Update Status:
+                </label>
+                <select
+                  id={`status-${order._id}`}
+                  value={order.status}
+                  onChange={(e) =>
+                    handleStatusChange(order._id, e.target.value)
+                  }
+                  className="border border-gray-300 rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {statusOptions.map((status) => (
+                    <option key={status} value={status}>
+                      {status}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
             <div className="mt-4">
               <h3 className="text-xl font-semibold text-gray-700">
                 User Information
@@ -63,11 +152,24 @@ const OrdersList = () => {
                 <div className="text-gray-600">
                   <p>
                     Username:{" "}
-                    <span className="font-medium">{order.user.username}</span>
+                    <span className="font-medium">{order.fullName}</span>
                   </p>
                   <p>
-                    Email:{" "}
-                    <span className="font-medium">{order.user.email}</span>
+                    Mobile: <span className="font-medium">{order.mobile}</span>
+                  </p>
+                  <p>
+                    Address:{" "}
+                    <span className="font-medium">{order.address}</span>
+                  </p>
+                  <p>
+                    City: <span className="font-medium">{order.city}</span>
+                  </p>
+                  <p>
+                    State: <span className="font-medium">{order.state}</span>
+                  </p>
+                  <p>
+                    Pincode:{" "}
+                    <span className="font-medium">{order.pincode}</span>
                   </p>
                 </div>
               ) : (
@@ -87,12 +189,17 @@ const OrdersList = () => {
                     <h4 className="text-lg text-gray-800">
                       Dish: {item?.dish?.title}
                     </h4>
+                    <p className="text-gray-600">Price: {item?.dish?.price}</p>
                     <p className="text-gray-600">Quantity: {item.quantity}</p>
                     <p className="text-gray-600">
                       Modifiers:{" "}
                       {item.modifiers.length > 0
                         ? item.modifiers.map((mod) => mod.name).join(", ")
                         : "No modifiers"}
+                    </p>
+                    <p>
+                      Status:{" "}
+                      <span className="font-medium">{order.status}</span>
                     </p>
                   </div>
                 ))

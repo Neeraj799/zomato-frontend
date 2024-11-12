@@ -36,7 +36,7 @@ const Login = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Login failed");
+        throw new Error(data.error.message || "Login failed");
       }
 
       const { token } = data;
@@ -53,8 +53,13 @@ const Login = () => {
 
       navigate("/");
     } catch (err) {
-      setError(err.message);
-      toast.error(err.message, {
+      // Extract the error message properly
+      const errorMessage =
+        err.response?.data?.error ||
+        err.message ||
+        "An error occurred during login";
+      setError(errorMessage);
+      toast.error(errorMessage, {
         position: "top-right",
         autoClose: 4000,
         hideProgressBar: false,

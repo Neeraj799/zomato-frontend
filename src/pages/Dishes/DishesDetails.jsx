@@ -12,7 +12,11 @@ const DishesDetails = ({ dish, onUpdate, onDelete }) => {
         />
       </td>
       <td className="px-4 py-2">{dish.title}</td>
-      <td className="px-4 py-2">{dish.category?.name}</td>{" "}
+      <td className="px-4 py-2">
+        {dish.categories.length > 0
+          ? dish.categories.map((category) => category.name).join(", ")
+          : "No categories"}
+      </td>
       <td className="px-4 py-2">
         {dish.modifiers.length > 0
           ? dish.modifiers.map((modifier) => modifier.name).join(", ")

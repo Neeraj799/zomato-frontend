@@ -8,16 +8,14 @@ const AddNewDish = () => {
     description: "",
     price: "",
     actualPrice: "",
-    category: "",
+    categories: [], // Changed from single category to array
     modifiers: [],
   });
 
   const [categories, setCategories] = useState([]);
   const [modifiers, setModifiers] = useState([]);
-
   const [image, setImage] = useState(null);
   const [errors, setErrors] = useState({});
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -64,7 +62,7 @@ const AddNewDish = () => {
     title: Yup.string().required("Title is required"),
     description: Yup.string().required("Description is required"),
     price: Yup.string().required("Price is required"),
-    category: Yup.string().required("Category is required"),
+    categories: Yup.array().min(1, "At least one category is required"), // Updated validation
     modifiers: Yup.array().min(1, "At least one modifier is required"),
   });
 
@@ -81,11 +79,23 @@ const AddNewDish = () => {
     }));
   };
 
-  const handleCategoryChange = (e) => {
-    setFormData({
-      ...formData,
-      category: e.target.value,
+  // Updated to handle multiple category selection
+  const handleCategoryChange = (categoryId) => {
+    setFormData((prevData) => {
+      const updatedCategories = prevData.categories.includes(categoryId)
+        ? prevData.categories.filter((id) => id !== categoryId)
+        : [...prevData.categories, categoryId];
+
+      return {
+        ...prevData,
+        categories: updatedCategories,
+      };
     });
+
+    setErrors((prev) => ({
+      ...prev,
+      categories: "",
+    }));
   };
 
   const handleModifierChange = (modifierId) => {
@@ -116,14 +126,19 @@ const AddNewDish = () => {
 
     try {
       await validationSchema.validate(formData, { abortEarly: false });
-      const { title, description, price, actualPrice, category, modifiers } =
+      const { title, description, price, actualPrice, categories, modifiers } =
         formData;
       const form = new FormData();
       form.append("title", title);
       form.append("description", description);
       form.append("price", price);
       form.append("actualPrice", actualPrice);
-      form.append("category", category);
+
+      // Updated to handle multiple categories
+      categories.forEach((category) => {
+        form.append("categories", category);
+      });
+
       modifiers.forEach((modifier) => {
         form.append("modifiers", modifier);
       });
@@ -144,13 +159,12 @@ const AddNewDish = () => {
 
       if (data.success) {
         alert(data.message);
-
         setFormData({
           title: "",
           description: "",
           price: "",
-          actualPrice,
-          category: "",
+          actualPrice: "",
+          categories: [],
           modifiers: [],
         });
         setImage(null);
@@ -210,9 +224,29 @@ const AddNewDish = () => {
           name="description"
           value={formData.description}
           onChange={handleChange}
-        ></textarea>
+        />
         {errors.description && (
           <p className="text-red-500 text-xs mt-1">{errors.description}</p>
+        )}
+      </div>
+
+      <div className="form-group mb-4">
+        <label
+          htmlFor="actualPrice"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Actual price
+        </label>
+        <input
+          type="number"
+          className="w-full p-2 border border-gray-300 rounded mt-1 focus:ring-2 focus:ring-blue-500"
+          id="actualPrice"
+          name="actualPrice"
+          value={formData.actualPrice}
+          onChange={handleChange}
+        />
+        {errors.actualPrice && (
+          <p className="text-red-500 text-xs mt-1">{errors.actualPrice}</p>
         )}
       </div>
 
@@ -236,49 +270,32 @@ const AddNewDish = () => {
         )}
       </div>
 
+      {/* Updated Categories section to use checkboxes */}
       <div className="form-group mb-4">
-        <label
-          htmlFor="price"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Actual price
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Categories
         </label>
-        <input
-          type="number"
-          className="w-full p-2 border border-gray-300 rounded mt-1 focus:ring-2 focus:ring-blue-500"
-          id="actualPrice"
-          name="actualPrice"
-          value={formData.actualPrice}
-          onChange={handleChange}
-        />
-        {errors.actualPrice && (
-          <p className="text-red-500 text-xs mt-1">{errors.actualPrice}</p>
-        )}
-      </div>
-
-      <div className="form-group mb-4">
-        <label
-          htmlFor="category"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Select Category
-        </label>
-        <select
-          className="w-full p-2 border border-gray-300 rounded mt-1 focus:ring-2 focus:ring-blue-500"
-          id="category"
-          name="category"
-          value={formData.category}
-          onChange={handleCategoryChange}
-        >
-          <option value="">Select a category</option>
+        <div className="space-y-2 max-h-48 overflow-y-auto border border-gray-300 rounded p-3">
           {categories.map((category) => (
-            <option key={category._id} value={category._id}>
-              {category.name}
-            </option>
+            <div key={category._id} className="flex items-center">
+              <input
+                type="checkbox"
+                id={`category-${category._id}`}
+                checked={formData.categories.includes(category._id)}
+                onChange={() => handleCategoryChange(category._id)}
+                className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+              />
+              <label
+                htmlFor={`category-${category._id}`}
+                className="ml-2 text-sm text-gray-700"
+              >
+                {category.name}
+              </label>
+            </div>
           ))}
-        </select>
-        {errors.category && (
-          <p className="text-red-500 text-xs mt-1">{errors.category}</p>
+        </div>
+        {errors.categories && (
+          <p className="text-red-500 text-xs mt-1">{errors.categories}</p>
         )}
       </div>
 
